@@ -640,12 +640,15 @@ h1{
 .extra-rooms{display:grid;grid-template-columns:1fr;gap:10px}
 .extra-room{background:white;border:1px solid #dfece7;border-radius:14px;padding:12px;transition:background .2s,border-color .2s,box-shadow .2s,transform .2s}
 .extra-room.has-extra{background:#eafaf4;border-color:#75caaf;box-shadow:0 10px 24px rgba(69,143,117,.08)}
-.extra-room.compact-match{padding:7px 8px;border-radius:999px;display:flex;align-items:center;gap:8px;background:#f1f7ff;border-color:#b7d4fb;box-shadow:none}
+.extra-room.compact-match{padding:7px 8px;border-radius:13px;display:flex;align-items:center;gap:8px;background:#f1f7ff;border-color:#b7d4fb;box-shadow:none}
 .compact-room-btn{border:0;background:#5b8def;color:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:900;cursor:pointer}
-.compact-room-note{font-size:11px;font-weight:900;color:#456fb9}
+.compact-room-note{font-size:11px;font-weight:900;color:#456fb9;line-height:1.5}
 .extra-room-head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:10px}
-.extra-room .room-name{font-weight:900;font-size:17px;line-height:1.2}
-.extra-room .base-cap{display:block;font-size:11px;font-weight:700;color:#71847e;margin-top:3px}
+.extra-room .room-name{font-weight:900;font-size:17px;line-height:1.3}
+.room-type-name{display:block;font-weight:900;letter-spacing:-.03em}
+.extra-room .base-cap{display:block;font-size:13px;font-weight:700;color:#617a71;margin-top:6px}
+.extra-room .base-cap strong{display:inline-block;border-radius:7px;background:#dff4ec;padding:4px 7px;color:#16644e;font-size:14px;font-weight:950}
+.capacity-sep{padding:0 3px;color:#9daea6}
 .extra-badge{flex:none;border-radius:999px;padding:6px 10px;background:#f2f6f5;color:#5d726b;font-size:11px;font-weight:900;align-self:flex-start}
 .extra-badge.extra{background:#daf5ea;color:#1f785f}
 .extra-badge.match{background:#eef3ff;color:#476fbd}
@@ -1029,6 +1032,17 @@ const ROOMS = [
 ];
 
 
+/* 일일시트에 인쇄된 순서 그대로 (일일시트 세팅 화면 전용) */
+const SHEET_ORDER = ['202','302','205','304','305','201','203','301','303','204','401','101','102'];
+const ROOM_NAMES = {
+  '202':'스탠다드-202', '302':'스탠다드-302',
+  '205':'디럭스-205', '304':'디럭스-304', '305':'디럭스-305',
+  '201':'프리미어-201', '203':'프리미어-203',
+  '301':'프리미어-301', '303':'프리미어-303',
+  '204':'프리미어 킹-204', '401':'프리미어 트리플-401',
+  '101':'패밀리 스위트-101', '102':'패밀리-102'
+};
+
 /* 객실별 기준인원: 일일 예약시트 기준 */
 const BASE_CAPACITY = {
   '101':4,'102':4,
@@ -1088,7 +1102,7 @@ function renderExtraRooms(){
   const box = $('extraRooms');
   box.innerHTML = '';
 
-  ROOMS.forEach(r => {
+  SHEET_ORDER.forEach(r => {
     const baseCap = BASE_CAPACITY[r];
     const maxCap = MAX_CAPACITY[r];
     const record = state.roomlist.extras[r] || {guests:'', bedding:0, collapsed:false};
@@ -1120,7 +1134,7 @@ function renderExtraRooms(){
 
       const note = document.createElement('div');
       note.className = 'compact-room-note';
-      note.textContent = '기준인원 내 확인 완료 · 눌러서 수정';
+      note.textContent = `${ROOM_NAMES[r]} · 기준 ${baseCap}인 · 확인 완료 (수정하려면 호수 선택)`;
       compact.appendChild(note);
 
       box.appendChild(compact);
@@ -1137,7 +1151,7 @@ function renderExtraRooms(){
 
     const roomTitle = document.createElement('div');
     roomTitle.className = 'room-name';
-    roomTitle.innerHTML = `${r}호<span class="base-cap">기준 ${baseCap}인 · 최대 ${maxCap}인</span>`;
+    roomTitle.innerHTML = `<span class="room-type-name">${ROOM_NAMES[r]}</span><span class="base-cap"><strong>기준인원 ${baseCap}인</strong> <span class="capacity-sep">·</span> 최대인원 ${maxCap}인</span>`;
     head.appendChild(roomTitle);
 
     const badge = document.createElement('div');
